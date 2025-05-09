@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Entrevista de Salida - Visualización</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      margin: 30px;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2F5597;
+    }
+    select {
+      margin-bottom: 20px;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .section {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    .section-title {
+      font-weight: bold;
+      font-size: 16px;
+      color: #2F5597;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2F5597;
+    }
+    .field {
+      margin: 5px 0;
+    }
+    .label {
+      font-weight: bold;
+      display: inline-block;
+      width: 200px;
+    }
+    button {
+      background: #2F5597;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Entrevista de Salida</h1>
+<h2>Óptica Los Andes - Clínica Oftalmológica Andes Visión</h2>
+
+<div id="contenido">
+  <div class="section">
+    <div class="section-title">Información General</div>
+    <div class="field"><span class="label">Nombre:</span> <span id="nombre"></span></div>
+    <div class="field"><span class="label">Cédula:</span> <span id="cedula"></span></div>
+    <div class="field"><span class="label">Ciudad:</span> <span id="ciudad"></span></div>
+    <div class="field"><span class="label">Cargo:</span> <span id="cargo"></span></div>
+    <div class="field"><span class="label">Fecha de salida:</span> <span id="fecha_salida"></span></div>
+    <div class="field"><span class="label">Jefe inmediato:</span> <span id="jefe"></span></div>
+    <div class="field"><span class="label">Teléfono:</span> <span id="telefono"></span></div>
+    <div class="field"><span class="label">Empresa:</span> <span id="empresa"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Motivos y Satisfacción</div>
+    <div class="field"><span class="label">Motivo de salida:</span> <span id="motivo_salida"></span></div>
+    <div class="field"><span class="label">Justificación:</span> <span id="justificacion_motivo"></span></div>
+    <div class="field"><span class="label">Satisfacción general:</span> <span id="satisfaccion_general"></span></div>
+    <div class="field"><span class="label">Valoración de administración:</span> <span id="valoracion_administracion"></span></div>
+    <div class="field"><span class="label">Justificación administración:</span> <span id="justificacion_admin"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Comentarios y Sugerencias</div>
+    <div class="field"><span class="label">Lo que más le gustaba:</span> <span id="gusto_mas"></span></div>
+    <div class="field"><span class="label">Lo que menos le gustaba:</span> <span id="gusto_menos"></span></div>
+    <div class="field"><span class="label">Sugerencias:</span> <span id="sugerencias"></span></div>
+    <div class="field"><span class="label">¿Su labor fue importante?:</span> <span id="importancia_labor"></span></div>
+    <div class="field"><span class="label">Justificación:</span> <span id="justificacion_importancia"></span></div>
+    <div class="field"><span class="label">¿Recomendaría la empresa?:</span> <span id="recomendaria"></span></div>
+  </div>
+</div>
+
+<button onclick="downloadPDF()">Descargar como PDF</button>
+
+<script>
+  fetch('sample_colaborador.json')
+    .then(response => response.json())
+    .then(data => {
+      for (const key in data) {
+        const el = document.getElementById(key);
+        if (el) el.innerText = data[key];
+      }
+    });
+
+  function downloadPDF() {
+    const element = document.getElementById('contenido');
+    html2pdf().from(element).save('entrevista_colaborador.pdf');
+  }
+</script>
+
+</body>
+</html>
