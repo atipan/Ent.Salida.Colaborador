@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Entrevista de Salida - Vista por Colaborador</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; color: #333; background: #fff; }
+    h1, h2 { text-align: center; color: #2F5597; }
+    select { margin: 20px auto; display: block; padding: 8px; font-size: 14px; }
+    .logos { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
+    .logos img { height: 80px; }
+    .section { margin-bottom: 30px; }
+    .section-title { font-size: 18px; font-weight: bold; color: #2F5597; border-bottom: 2px solid #2F5597; padding-bottom: 5px; margin-bottom: 15px; }
+    .field { margin: 8px 0; }
+    .label { font-weight: bold; display: block; margin-bottom: 3px; }
+    .response-box { background: #f2f2f2; padding: 8px 12px; border-radius: 5px; margin-bottom: 10px; }
+    .stars { color: gold; font-size: 20px; }
+    button { background-color: #2F5597; color: white; padding: 10px 20px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; display: block; margin: 30px auto; }
+  </style>
+</head>
+<body>
+
+<h1>ENTREVISTA DE SALIDA DEL COLABORADOR</h1>
+<h2>Óptica Los Andes - Clínica Andes Visión</h2>
+
+<div class="logos">
+  <img src="https://intranet.opticalosandes.com.ec/wp-content/uploads/2022/02/grupo-ola.png" />
+  <img src="https://intranet.opticalosandes.com.ec/wp-content/uploads/2021/12/andes-logo_Mesa-de-trabajo-1.jpg" />
+</div>
+
+<select id="selector-colaborador">
+  <option value="">Seleccione un colaborador</option>
+</select>
+
+<div id="contenido" style="display:none">
+  <div class="section">
+    <div class="section-title">INFORMACIÓN GENERAL</div>
+    <div class="field"><span class="label">Empresa:</span><div class="response-box" id="empresa"></div></div>
+    <div class="field"><span class="label">Nombres Completos:</span><div class="response-box" id="nombre"></div></div>
+    <div class="field"><span class="label">Cédula:</span><div class="response-box" id="cedula"></div></div>
+    <div class="field"><span class="label">Ciudad:</span><div class="response-box" id="ciudad"></div></div>
+    <div class="field"><span class="label">Cargo:</span><div class="response-box" id="cargo"></div></div>
+    <div class="field"><span class="label">Fecha de salida:</span><div class="response-box" id="fecha_salida"></div></div>
+    <div class="field"><span class="label">Jefe inmediato:</span><div class="response-box" id="jefe"></div></div>
+    <div class="field"><span class="label">Teléfono:</span><div class="response-box" id="telefono"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">CONDICIONES LABORALES</div>
+    <div class="field"><span class="label">Motivo de salida:</span><div class="response-box" id="motivo_salida"></div></div>
+    <div class="field"><span class="label">Justificación:</span><div class="response-box" id="justificacion_motivo"></div></div>
+    <div class="field"><span class="label">Satisfacción general:</span><div class="response-box" id="satisfaccion_general"></div></div>
+    <div class="field"><span class="label">Valoración de administración:</span>
+      <div class="stars" id="valoracion_administracion"></div>
+    </div>
+    <div class="field"><span class="label">Justificación administración:</span><div class="response-box" id="justificacion_admin"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">COMENTARIOS Y SUGERENCIAS</div>
+    <div class="field"><span class="label">Lo que más le gustaba:</span><div class="response-box" id="gusto_mas"></div></div>
+    <div class="field"><span class="label">Lo que menos le gustaba:</span><div class="response-box" id="gusto_menos"></div></div>
+    <div class="field"><span class="label">Sugerencias:</span><div class="response-box" id="sugerencias"></div></div>
+    <div class="field"><span class="label">¿Su labor fue importante?:</span><div class="response-box" id="importancia_labor"></div></div>
+    <div class="field"><span class="label">Justificación:</span><div class="response-box" id="justificacion_importancia"></div></div>
+    <div class="field"><span class="label">¿Recomendaría la empresa?:</span><div class="response-box" id="recomendaria"></div></div>
+  </div>
+</div>
+
+<button onclick="downloadPDF()">Descargar como PDF</button>
+
+<script>
+let data = [];
+
+fetch('entrevistas.json')
+  .then(response => response.json())
+  .then(json => {
+    data = json;
+    const selector = document.getElementById('selector-colaborador');
+    json.forEach((item, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = item.nombre;
+      selector.appendChild(option);
+    });
+  });
+
+document.getElementById('selector-colaborador').addEventListener('change', function () {
+  const idx = this.value;
+  if (idx === "") {
+    document.getElementById("contenido").style.display = "none";
+    return;
+  }
+
+  const d = data[idx];
+  document.getElementById("contenido").style.display = "block";
+  for (const key in d) {
+    const el = document.getElementById(key);
+    if (el) {
+      if (key === 'valoracion_administracion') {
+        const val = parseInt(d[key]);
+        el.innerHTML = '★'.repeat(val) + '☆'.repeat(5 - val);
+      } else {
+        el.innerText = d[key];
+      }
+    }
+  }
+});
+
+function downloadPDF() {
+  const content = document.getElementById("contenido");
+  html2pdf().from(content).save("entrevista_colaborador.pdf");
+}
+</script>
+</body>
+</html>
